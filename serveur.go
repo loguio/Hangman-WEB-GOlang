@@ -13,28 +13,26 @@ func main() {
 		return
 	}
 	type Page struct {
-		Title   string
-		Content string
-		lettre  string
+		Title  string
+		Letter string
 	}
 	str := []string{"oui", "uwu", "aayay"}
-	fmt.Println("uwu")
+	i := 0
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-		i := 0
+
 		fmt.Println(r.Header.Get("User-Agent"))
-		data := Page{"Hangman-Web ", "Bon courage !", str[i]}
-		tmpl.ExecuteTemplate(w, "index", data)
-		fmt.Println("uwu")
+		data := Page{"Hangman-Web ", str[i]}
 
 		if r.Method == "POST" {
 			i++
 			lettre := r.FormValue("letter") //recupere la valeur letter du formulaire ( html)
 			str = append(str, lettre)
-			data = Page{"Hangman-Web ", "Bon courage !", lettre}
+			data = Page{"Hangman-Web ", str[i]}
 			fmt.Println(lettre)
 		} else if r.Method == "GET" {
 			fmt.Println("pas de POST effectué")
 		}
+		tmpl.ExecuteTemplate(w, "index", data)
 	})
 
 	fileServer := http.FileServer(http.Dir("assets"))
