@@ -15,8 +15,7 @@ func GetRandomWord() []string { //fonction qui choisi un mot aléatoire dans une
 	max := 3
 	rand.Seed(time.Now().UnixNano())
 	whichWord := (rand.Intn(max-min+1) + min) //choisi un nombre aléatoire entre 1 et 3( pour les listes de mots )
-	words := "words" + strconv.Itoa(whichWord) + ".txt"
-
+	words := "hangman-classic/words" + strconv.Itoa(whichWord) + ".txt"
 	f, err := os.Open(words)
 
 	if err != nil { //gestion de l'erreur

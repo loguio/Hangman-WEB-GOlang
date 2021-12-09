@@ -21,21 +21,21 @@ func main() {
 		Content string
 	}
 
+	InitString := hangman.GetRandomWord() //met chaque mot de la liste de mot dans un tableau de string
+	game.RandomWord = (InitString[rand.Intn(len(InitString))])
+	game.ArrayInit = hangman.InitArray(game.RandomWord)
+	game.ArrayAnswer = hangman.InitArray(game.RandomWord)
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
 		fmt.Println(r.Header.Get("User-Agent"))
 		data := Page{"Titre 1 ", "Contenu"}
 		tmpl.ExecuteTemplate(w, "index", data)
-		game.Lettre = r.FormValue("letter")   //recupere la valeur letter du formulaire ( html)
-		InitString := hangman.GetRandomWord() //met chaque mot de la liste de mot dans un tableau de string
-		game.RandomWord = (InitString[rand.Intn(len(InitString))])
-		game.ArrayInit = hangman.InitArray(game.RandomWord)
-		game.ArrayAnswer = hangman.InitArray(game.RandomWord)
+		game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire ( html)
 		if r.Method == "POST" {
-			//numberOfAttemps := game.Game(game.Lettre)
-			//fmt.Println(numberOfAttemps)
+			game.Game(game.Lettre)
 			fmt.Println(game.Lettre)
 		} else if r.Method == "GET" {
-			fmt.Println("pas de POST effectué")
+			fmt.Println("GET")
 		}
 	})
 
