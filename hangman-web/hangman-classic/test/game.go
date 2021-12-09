@@ -10,9 +10,9 @@ var Lettre string
 var ArrayAnswer []rune
 var ArrayInit []rune
 var RandomWord string
+var NumberOfAttemps int
 
 func Game(Lettre string) {
-	numberOfAttemps := 10                 //nombre d'essais
 	InitString := hangman.GetRandomWord() //met chaque mot de la liste de mot dans un tableau de string
 	if InitString == nil {                //si le fichier n'est pas trouvé et donc il n'y a pas de mot disponible pour le jeu, arret du jeu
 		return
@@ -21,7 +21,7 @@ func Game(Lettre string) {
 	hangman.Compare(Lettre, ArrayInit, ArrayAnswer) //regarde si la lettre est contenu dans le mot
 	compare := hangman.Compare(Lettre, ArrayInit, ArrayAnswer)
 	if compare == false { //si la lettre n'est pas contenue
-		numberOfAttemps--
+		NumberOfAttemps--
 	} else if compare == true { //si la lettre est contenue dans le mot, remplacer dans le tableau de réponse le caractère _ par la lettre mise par le joueur
 		arrayRune := []rune(Lettre)
 		pos := []int(nil)
