@@ -1,0 +1,27 @@
+{{ define "index"}}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title>Hangman Web</title>
+</head>
+<body>
+    <div style="text-align:center"> 
+    <h1>{{ .Title }}</h1>
+    </div>
+    <p>{{ .Content }}</p> <br>
+    <form action="/" method="post">
+        <label for="fer">inser a Letter</label>
+        <br>
+        <input type="text" name="letter" placeholder="Letter" maxlength="1">
+        <input type="submit" value="valider">
+    </form>
+    <br> 
+    <h1>{{ .lettre }}</h1>
+    <img src="https://www.example.com/images/dinosaur.jpg" alt="Flowers in Chania">
+</body>
+</html>
+{{ end }}
