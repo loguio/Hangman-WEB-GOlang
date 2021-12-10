@@ -3,7 +3,11 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"math/rand"
 	"net/http"
+
+	hangman "./hangman-classic"
+	game "./hangman-classic/test"
 )
 
 func main() {
@@ -16,6 +20,11 @@ func main() {
 		Title  string
 		Letter string
 	}
+	InitString := hangman.GetRandomWord() //met chaque mot de la liste de mot dans un tableau de string
+	game.RandomWord = (InitString[rand.Intn(len(InitString))])
+	game.ArrayInit = []rune(game.RandomWord)
+	game.ArrayAnswer = hangman.InitArray(game.RandomWord)
+	game.NumberOfAttemps = 11
 	//str := []string{""}
 	i := 0
 	list_letter := ""
