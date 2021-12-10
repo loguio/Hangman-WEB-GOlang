@@ -34,9 +34,7 @@ func main() {
 		game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire ( html)
 		if r.Method == "POST" {
 			game.Game(game.Lettre)
-			//fmt.Fprintln(w, game.Lettre)
 			fmt.Fprintln(w, string(game.ArrayAnswer))
-			fmt.Println(game.NumberOfAttemps)
 		} else if r.Method == "GET" {
 			fmt.Println("GET")
 		}
@@ -48,8 +46,5 @@ func main() {
 	http.ListenAndServe("localhost:3000", nil)
 }
 
-//TODO faire 3 partie pour chaque demande dans la base de donnée, une partiesi c'est GET , une autre si c'est POST et une autre qui differe des autres parties ( != GET || Post)
 //TODO Une fonction avec des switch pour l'état du pendu
-//TODO Image pour pendu
 //TODO gestion d'erreur 404(erreur connection serveur) et 501(parti Backend beug)
-//TODO faire le README.md
