@@ -26,11 +26,18 @@
                 <input type="submit" value="valider">
             </form>
             <br>
-        {{end}}
             <form method="post">
                 <input type="submit" name="restart" value="Restart">
             </form>
-        <p>Nombre de vie :{{ .NumberOfAttemps}}</p>
+        {{ end }}
+        {{if (eq .WordFind true)}}
+        <p>Gagné</p>
+        <br>
+        <p>Le mot cherché était bien: {{ .Word}}</p>
+        <br>
+        <p>Mettre une image de victoire</p>      
+        {{ end }} 
+         <p>Nombre de vie :{{ .NumberOfAttemps}}</p>
         <br> 
         <p>Mot recherché : {{ .SearchWord}}</p>
         <br>

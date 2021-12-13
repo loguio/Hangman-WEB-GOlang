@@ -17,6 +17,7 @@ type Page struct {
 	NumberOfAttemps int
 	SearchWord      string
 	Word            string
+	WordFind        bool
 }
 
 var tabURL = []string{
@@ -32,6 +33,8 @@ var tabURL = []string{
 	"https://i.goopics.net/rswcvd.png",
 	"https://i.goopics.net/uiwsjx.png"}
 
+var WordFind bool
+
 func main() {
 
 	website()
@@ -42,9 +45,6 @@ func main() {
 	http.ListenAndServe("localhost:3000", nil) //lancement du serveur
 
 }
-
-//TODO mettre tout les trucs dans une autre fonction sauf les trucs qui touchent au serveur
-
 func website() {
 
 	game.NumberOfAttemps = 10
@@ -56,21 +56,24 @@ func website() {
 		list_letter := ""
 
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer)}
+			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind}
 			if r.Method == "POST" {
 				if r.FormValue("restart") == "Restart" {
 					Restart()
 				} else {
 					game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
 					game.Game()
+					if string(game.ArrayAnswer) == string(game.ArrayInit) {
+						WordFind = true
+					}
 					if game.Lettre != "" && game.Lettre != " " {
 						list_letter += game.Lettre
 						list_letter += ", "
 					}
 					if game.NumberOfAttemps == 0 {
-						data = Page{"Hangman-Web ", list_letter, "https://th.bing.com/th/id/OIP.kq55Q_4YugKpMd67w_YD3wHaFO?pid=ImgDet&rs=1", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit)}
+						data = Page{"Hangman-Web ", list_letter, "https://th.bing.com/th/id/OIP.kq55Q_4YugKpMd67w_YD3wHaFO?pid=ImgDet&rs=1", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind}
 					} else {
-						data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit)}
+						data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind}
 					}
 				}
 				tmpl.ExecuteTemplate(w, "index", data)
@@ -86,6 +89,7 @@ func website() {
 }
 
 func Restart() {
+	WordFind = false
 	game.InitString = hangman.GetRandomWord()
 	game.RandomWord = string(game.InitString[rand.Intn(len(game.InitString))])
 	game.ArrayAnswer = hangman.InitArray(game.RandomWord)
@@ -110,5 +114,4 @@ func Error501() {
 		tmpl.ExecuteTemplate(w, "error501", nil)
 	})
 	http.ListenAndServe("localhost:3000", nil)
-
 }
