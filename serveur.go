@@ -47,18 +47,10 @@ func main() {
 
 func website() {
 
-	game.Lettre = ""
 	game.NumberOfAttemps = 10
 	tmpl, err := template.ParseFiles("./templates/index.gohtml")
 	if err != nil {
-		fmt.Println(err)
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-			tmpl, err = template.ParseFiles("./templates/error404.gohtml")
-			fmt.Println("le serveur est en cours d'éxécution a l'adresse localhost:3000")
-			tmpl.ExecuteTemplate(w, "error404", nil)
-		})
-		http.ListenAndServe("localhost:3000", nil)
-
+		Error404()
 	} else {
 
 		list_letter := ""
@@ -66,9 +58,8 @@ func website() {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
 			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer)}
 			if r.Method == "POST" {
-				//restart = r.FormValue("restart")
 				if r.FormValue("restart") == "Restart" {
-					restart()
+					Restart()
 				} else {
 					game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
 					game.Game()
@@ -87,19 +78,37 @@ func website() {
 				fmt.Println("pas de POST effectué")
 				tmpl.ExecuteTemplate(w, "index", data)
 			} else {
-				tmpl, err = template.ParseFiles("./templates/error501.gohtml")
-				tmpl.ExecuteTemplate(w, "error501", nil)
+				Error501()
 			}
 
 		})
 	}
 }
 
-func restart() {
+func Restart() {
 	game.InitString = hangman.GetRandomWord()
 	game.RandomWord = string(game.InitString[rand.Intn(len(game.InitString))])
 	game.ArrayAnswer = hangman.InitArray(game.RandomWord)
 	game.ArrayInit = []rune(game.RandomWord)
 	game.NumberOfAttemps = 10
+
+}
+
+func Error404() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
+		tmpl, _ := template.ParseFiles("./templates/error404.gohtml")
+		fmt.Println("le serveur est en cours d'éxécution à l'adresse localhost:3000")
+		tmpl.ExecuteTemplate(w, "error404", nil)
+	})
+	http.ListenAndServe("localhost:3000", nil)
+
+}
+func Error501() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, _ := template.ParseFiles("./tempaltes/error501.gohtml")
+		fmt.Println("le serveur est en cours d'execution à l'adresse localhost:3000")
+		tmpl.ExecuteTemplate(w, "error501", nil)
+	})
+	http.ListenAndServe("localhost:3000", nil)
 
 }
