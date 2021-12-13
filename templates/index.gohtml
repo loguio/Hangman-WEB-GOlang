@@ -15,7 +15,7 @@
     <p>
         <br>
         <div style="margin-top:100px; margin-right:200px" >
-            <img src={{ .URLpendu }} alt="PENDU" width="38%" align="right" margin-right="10px">
+            <img src={{ .URLpendu }} alt="PENDU" width="38%" align="right" margin-right="10px" alt="Début du pendu">
         </div>
     </p> 
     <form action="/" method="post">
@@ -24,9 +24,16 @@
         <input type="text" name="letter" placeholder="Letter" maxlength="1">
         <input type="submit" value="valider">
     </form>
+    <br>
+    <p>Nombre de vie :{{ .NumberOfAttemps}}</p>
     <br> 
-    <p width="10%" align= "right" style="margin-top:300px; margin-right:200px"><font face="Verdana">Les lettres que vous avez déjà utilisé sont : {{ .Letter }}</font></p>
-    
+    <p>Mot recherché : {{ .SearchWord}}</p>
+    <form action="/" method="post">
+        <input type="submit" value="RECOMMENER UNE PARTIE" name="restart" style="margin-top:50px;">
+        <ul></ul>
+    </form>
+    <br>
+    <p width="10%" align= "right" style="margin-top:200px; margin-right:200px"><font face="Verdana">Les lettres que vous avez déjà utilisé sont : {{ .Letter }}</font></p>
 </body>
 </html>
 {{ end }}
