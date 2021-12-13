@@ -25,7 +25,7 @@ func main() {
 	// restart := false
 	game.NumberOfAttemps = 10
 	tmpl, err := template.ParseFiles("./templates/index.gohtml")
-
+	// string(game.ArrayInit)
 	type Page struct {
 		Title           string
 		Letter          string
@@ -44,6 +44,9 @@ func main() {
 
 	} else {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
+			if string(game.ArrayAnswer) == string(game.ArrayInit) {
+				fmt.Println("oue")
+			}
 			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer)}
 			if r.Method == "POST" {
 				game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
@@ -53,7 +56,7 @@ func main() {
 						same = true
 					}
 				}
-				if game.Lettre != "" && game.Lettre != " " && same == false {
+				if game.Lettre != "" && game.Lettre != " " && !same {
 					list_letter += game.Lettre
 					list_letter += ", "
 					tabletter = append(tabletter, game.Lettre)
