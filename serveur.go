@@ -3,16 +3,38 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"math/rand"
 	"net/http"
 
-	hangman "./hangman-classic"
 	game "./hangman-classic/test"
 )
 
+var tabURL = []string{
+	"",
+	"https://i.goopics.net/bqidl2.png",
+	"https://i.goopics.net/rojgcs.png",
+	"https://i.goopics.net/igktwf.png",
+	"https://i.goopics.net/a8sgek.png",
+	"https://i.goopics.net/a9mnww.png",
+	"https://i.goopics.net/lif1mq.png",
+	"https://i.goopics.net/hy8no6.png",
+	"https://i.goopics.net/h377xl.png",
+	"https://i.goopics.net/rswcvd.png",
+	"https://th.bing.com/th/id/R.465dad455068168abb0a4e97ece5dd25?rik=eZV0J8IydjJ6xA&pid=ImgRaw&r=0&sres=1&sresct=1"}
+
 func main() {
-	i := 0
+	// restart := false
+	game.NumberOfAttemps = 10
 	tmpl, err := template.ParseFiles("./templates/index.gohtml")
+
+	type Page struct {
+		Title           string
+		Letter          string
+		URLpendu        string
+		NumberOfAttemps int
+		SearchWord      string
+	}
+	list_letter := ""
+	tabletter := []string{}
 	if err != nil {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
 			tmpl, err = template.ParseFiles("./templates/error404.gohtml")
@@ -21,60 +43,46 @@ func main() {
 		http.ListenAndServe("localhost:3000", nil)
 
 	} else {
-		type Page struct {
-			Title    string
-			Letter   string
-			URLpendu string
-		}
-		InitString := hangman.GetRandomWord() //met chaque mot de la liste de mot dans un tableau de string
-		game.RandomWord = (InitString[rand.Intn(len(InitString))])
-		game.ArrayInit = []rune(game.RandomWord)
-		game.ArrayAnswer = hangman.InitArray(game.RandomWord)
-		game.NumberOfAttemps = 11
-		list_letter := ""
-		var tabURL = []string{
-			"",
-			"https://i.goopics.net/uiwsjx.png",
-			"https://i.goopics.net/rswcvd.png",
-			"https://i.goopics.net/h377xl.png",
-			"https://i.goopics.net/hy8no6.png",
-			"https://i.goopics.net/lif1mq.png",
-			"https://i.goopics.net/a9mnww.png",
-			"https://i.goopics.net/a8sgek.png",
-			"https://i.goopics.net/igktwf.png",
-			"https://i.goopics.net/rojgcs.png",
-			"https://i.goopics.net/bqidl2.png"}
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-			fmt.Println("le serveur est en cours d'éxécution a l'adresse localhost:3000")
-			data := Page{"Hangman-Web ", list_letter, ""}
+			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer)}
 			if r.Method == "POST" {
-				lettre := r.FormValue("letter") //recupere la valeur letter du formulaire ( html)
-				if lettre != "" && lettre != " " {
-					list_letter += lettre
+				game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
+				same := false
+				for i := 0; i < len(tabletter); i++ {
+					if game.Lettre == tabletter[i] {
+						same = true
+					}
+				}
+				if game.Lettre != "" && game.Lettre != " " && same == false {
+					list_letter += game.Lettre
 					list_letter += ", "
+					tabletter = append(tabletter, game.Lettre)
+					game.Game()
 				}
-				if i > 10 {
-					data = Page{"Hangman-Web ", list_letter, "https://th.bing.com/th/id/OIP.kq55Q_4YugKpMd67w_YD3wHaFO?pid=ImgDet&rs=1"}
+				if game.NumberOfAttemps == 0 {
+					data = Page{"Hangman-Web ", list_letter, "https://th.bing.com/th/id/OIP.kq55Q_4YugKpMd67w_YD3wHaFO?pid=ImgDet&rs=1", game.NumberOfAttemps, string(game.ArrayAnswer)}
+					game.NumberOfAttemps = 10
 				} else {
-					data = Page{"Hangman-Web ", list_letter, tabURL[i]}
+					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer)}
 				}
-				i++
 				tmpl.ExecuteTemplate(w, "index", data)
 			} else if r.Method == "GET" {
-				fmt.Println("pas de POST effectué")
 				tmpl.ExecuteTemplate(w, "index", data)
+			} else if r.Method == "RESTART" {
+				game.NumberOfAttemps = 10
+				list_letter = ""
+				tmpl.ExecuteTemplate(w, "index", data)
+				main()
 			} else {
 				tmpl, err = template.ParseFiles("./templates/error501.gohtml")
 				tmpl.ExecuteTemplate(w, "error501", nil)
 			}
-
 		})
 
-		fileServer := http.FileServer(http.Dir("assets"))
+		fileServer := http.FileServer(http.Dir("assets")) //application du CSS qui sera en fichier statique
 		http.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
-		http.ListenAndServe("localhost:3000", nil)
+		fmt.Println("le serveur est en cours d'éxécution a l'adresse localhost:3000")
+		http.ListenAndServe("localhost:8080", nil)
 	}
 }
-
-//TODO faire 3 partie pour chaque demande dans la base de donnée, une partiesi c'est GET , une autre si c'est POST et une autre qui differe des autres parties ( != GET || Post)
