@@ -3,10 +3,23 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"math/rand"
 	"net/http"
 
+	hangman "./hangman-classic"
 	game "./hangman-classic/test"
 )
+
+type Page struct {
+	Title           string
+	Letter          string
+	URLpendu        string
+	NumberOfAttemps int
+	SearchWord      string
+	Word            string
+	WordFind        bool
+	Tabletter       []string
+}
 
 var tabURL = []string{
 	"",
@@ -19,73 +32,99 @@ var tabURL = []string{
 	"https://i.goopics.net/hy8no6.png",
 	"https://i.goopics.net/h377xl.png",
 	"https://i.goopics.net/rswcvd.png",
-	"https://th.bing.com/th/id/R.465dad455068168abb0a4e97ece5dd25?rik=eZV0J8IydjJ6xA&pid=ImgRaw&r=0&sres=1&sresct=1"}
+	"https://i.goopics.net/uiwsjx.png"}
+
+var WordFind bool
+var tabletter []string
+var list_letter string
 
 func main() {
-	// restart := false
-	game.NumberOfAttemps = 10
-	tmpl, err := template.ParseFiles("./templates/index.gohtml")
-	// string(game.ArrayInit)
-	type Page struct {
-		Title           string
-		Letter          string
-		URLpendu        string
-		NumberOfAttemps int
-		SearchWord      string
-	}
-	list_letter := ""
-	tabletter := []string{}
-	if err != nil {
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-			tmpl, err = template.ParseFiles("./templates/error404.gohtml")
-			tmpl.ExecuteTemplate(w, "error404", nil)
-		})
-		http.ListenAndServe("localhost:3000", nil)
 
+	website()
+	fileServer := http.FileServer(http.Dir("assets")) //application du CSS qui sera en fichier statique
+	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
+
+	fmt.Println("le serveur est en cours d'éxécution a l'adresse localhost:3000")
+	http.ListenAndServe("localhost:3000", nil) //lancement du serveur
+}
+func website() {
+
+	tmpl, err := template.ParseFiles("./templates/index.gohtml")
+	if err != nil {
+		Error404()
 	} else {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-			if string(game.ArrayAnswer) == string(game.ArrayInit) {
-				fmt.Println("oue")
-			}
-			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer)}
+			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
 			if r.Method == "POST" {
-				game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
-				same := false
-				for i := 0; i < len(tabletter); i++ {
-					if game.Lettre == tabletter[i] {
-						same = true
-					}
-				}
-				if game.Lettre != "" && game.Lettre != " " && !same {
-					list_letter += game.Lettre
-					list_letter += ", "
-					tabletter = append(tabletter, game.Lettre)
-					game.Game()
-				}
-				if game.NumberOfAttemps == 0 {
-					data = Page{"Hangman-Web ", list_letter, "https://th.bing.com/th/id/OIP.kq55Q_4YugKpMd67w_YD3wHaFO?pid=ImgDet&rs=1", game.NumberOfAttemps, string(game.ArrayAnswer)}
-					game.NumberOfAttemps = 10
+				if r.FormValue("restart") == "Restart" {
+					Restart()
+					data = Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
 				} else {
-					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer)}
+					game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
+					same := false
+					for i := 0; i < len(tabletter); i++ {
+						if game.Lettre == tabletter[i] {
+							same = true
+						}
+					}
+					if game.Lettre == "" {
+						fmt.Println(err)
+					}
+					if string(game.ArrayAnswer) == string(game.ArrayInit) {
+						WordFind = true
+					}
+					if game.Lettre != "" && game.Lettre != " " && !same {
+						tabletter = append(tabletter, game.Lettre)
+						list_letter += game.Lettre
+						list_letter += ", "
+						game.Game()
+					}
+					if game.NumberOfAttemps == 0 {
+						data = Page{"Hangman-Web ", list_letter, "https://th.bing.com/th/id/OIP.kq55Q_4YugKpMd67w_YD3wHaFO?pid=ImgDet&rs=1", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
+					} else {
+						data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
+					}
 				}
 				tmpl.ExecuteTemplate(w, "index", data)
 			} else if r.Method == "GET" {
+				data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
+				fmt.Println("GET")
 				tmpl.ExecuteTemplate(w, "index", data)
-			} else if r.Method == "RESTART" {
-				game.NumberOfAttemps = 10
-				list_letter = ""
-				tmpl.ExecuteTemplate(w, "index", data)
-				main()
 			} else {
-				tmpl, err = template.ParseFiles("./templates/error501.gohtml")
-				tmpl.ExecuteTemplate(w, "error501", nil)
+				Error501()
 			}
+
 		})
-
-		fileServer := http.FileServer(http.Dir("assets")) //application du CSS qui sera en fichier statique
-		http.Handle("/static/", http.StripPrefix("/static/", fileServer))
-
-		fmt.Println("le serveur est en cours d'éxécution a l'adresse localhost:3000")
-		http.ListenAndServe("localhost:8080", nil)
 	}
+}
+
+func Restart() {
+	tabletter = nil
+	WordFind = false
+	game.InitString = hangman.GetRandomWord()
+	game.RandomWord = string(game.InitString[rand.Intn(len(game.InitString))])
+	game.ArrayInit = []rune(game.RandomWord)
+	game.ArrayAnswer = hangman.InitArray(game.RandomWord)
+	game.NumberOfAttemps = 10
+}
+
+//fonction qui crée la page de l'erreur 404
+func Error404() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, _ := template.ParseFiles("./templates/error404.gohtml")
+		fmt.Println("le serveur est en cours d'éxécution à l'adresse localhost:3000")
+		tmpl.ExecuteTemplate(w, "error404", nil)
+	})
+	http.ListenAndServe("localhost:3000", nil)
+
+}
+
+//fonction qui crée la page de l'erreur 501
+func Error501() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, _ := template.ParseFiles("./tempaltes/error501.gohtml")
+		fmt.Println("le serveur est en cours d'execution à l'adresse localhost:3000")
+		tmpl.ExecuteTemplate(w, "error501", nil)
+	})
+	http.ListenAndServe("localhost:3000", nil)
 }

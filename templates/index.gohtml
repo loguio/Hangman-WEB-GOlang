@@ -1,39 +1,50 @@
 {{ define "index"}}
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/style.css">
-    <title>Hangman Web</title>
-</head>
-<body>
-    <div style="text-align:center"> 
-    <h1><font face="Verdana">{{ .Title }}</font></h1>
-    </div>
-    <p>
-        <br>
-        <div style="margin-top:100px; margin-right:200px" >
-            <img src={{ .URLpendu }} width="38%" align="right" margin-right="10px" alt="Début du pendu">
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="static/style.css">
+        <title>Hangman Web</title>
+    </head>
+    <body>
+        <div style="text-align:center"> 
+        <h1><font face="Verdana">{{ .Word }}</font></h1>
         </div>
-    </p> 
-    <form action="/" method="post">
-        <label for="fer">inser a Letter</label>
+        <p>
+            <br>
+            <div style="margin-top:100px; margin-right:200px" >
+                <img src={{ .URLpendu }} alt="PENDU" width="38%" align="right" margin-right="10px">
+            </div>
+        </p> 
+        {{if and (eq .WordFind false ) (ne .NumberOfAttemps 0) }}
+            <form action="/" method="post">
+                <label for="fer">Insert a letter</label>
+                <br>
+                <input type="text" name="letter" placeholder="Letter" maxlength="1" autofocus>
+                <input type="submit" value="valider">
+            </form>
+            <br>
+            {{ end }}
+            <form method="post">
+                <input type="submit" name="restart" value="Restart">
+            </form>
+        {{if (eq .WordFind true) }}
+        <p>Gagné</p>
         <br>
-        <input type="text" name="letter" placeholder="Letter" maxlength="1">
-        <input type="submit" value="valider">
-    </form>
-    <br>
-    <p>Nombre de vie :{{ .NumberOfAttemps}}</p>
-    <br> 
-    <p>Mot recherché : {{ .SearchWord}}</p>
-    <form action="/" method="post">
-        <input type="submit" value="RECOMMENER UNE PARTIE" name="restart" style="margin-top:50px;">
-        <ul></ul>
-    </form>
-    <br>
-    <p width="10%" align= "right" style="margin-top:200px; margin-right:200px"><font face="Verdana">Les lettres que vous avez déjà utilisé sont : {{ .Letter }}</font></p>
-</body>
-</html>
+        <p>Le mot cherché était bien: {{ .Word}}</p>
+        <br>
+        <p>Mettre une image de victoire</p>      
+        {{ end }} 
+         <p>Nombre de vie :{{ .NumberOfAttemps}}</p>
+        <br> 
+        <p>Mot recherché : {{ .SearchWord}}</p>
+        <br>
+        {{if (eq .NumberOfAttemps 0)}}
+        <p>Le mot recherché était: {{ .Word }}</p>
+        {{ end }}
+        <p width="10%" align="right" style="margin-top:300px; margin-right:200px"><font face="Verdana">Les lettres que vous avez déjà utilisé sont : {{ .Tabletter }}</font></p>
+    </body>
+    </html>
 {{ end }}
