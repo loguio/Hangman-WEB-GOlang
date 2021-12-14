@@ -46,11 +46,11 @@ func Website() {
 		Error404()
 	} else {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
+			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
 			if r.Method == "POST" {
 				if r.FormValue("restart") == "Restart" {
 					Restart()
-					data = Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
+					data = Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
 				} else {
 					game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
 					same := false
@@ -79,7 +79,7 @@ func Website() {
 				}
 				tmpl.ExecuteTemplate(w, "index", data)
 			} else if r.Method == "GET" {
-				data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
+				data = Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
 				fmt.Println("GET")
 				tmpl.ExecuteTemplate(w, "index", data)
 			} else {
