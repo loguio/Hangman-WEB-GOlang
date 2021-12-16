@@ -11,46 +11,48 @@ import (
 )
 
 type Page struct {
-	Title           string
-	Letter          string
-	URLpendu        string
-	NumberOfAttemps int
-	SearchWord      string
-	Word            string
-	WordFind        bool
-	Tabletter       []string
+	Title            string
+	Letter           string
+	URLpendu         string
+	NumberOfAttemps  int
+	SearchWord       string
+	Word             string
+	WordFind         bool
+	Tabletter        []string
+	LetterGoodFormat bool
 }
 
 var tabURL = []string{
 	"",
-	"https://i.goopics.net/bqidl2.png",
-	"https://i.goopics.net/rojgcs.png",
-	"https://i.goopics.net/igktwf.png",
-	"https://i.goopics.net/a8sgek.png",
-	"https://i.goopics.net/a9mnww.png",
-	"https://i.goopics.net/lif1mq.png",
-	"https://i.goopics.net/hy8no6.png",
-	"https://i.goopics.net/h377xl.png",
-	"https://i.goopics.net/rswcvd.png",
-	"https://i.goopics.net/uiwsjx.png",
+	"./picture/pendu_10.png",
+	"./picture/pendu_9.png",
+	"./picture/pendu_8.png",
+	"./picture/pendu_7.png",
+	"./picture/pendu_6.png",
+	"./picture/pendu_5.png",
+	"./picture/pendu_4.png",
+	"./picture/pendu_3.png",
+	"./picture/pendu_2.png",
+	"./picture/pendu_1.png",
+	"./picture/you_lose.png",
 }
 
 var WordFind bool
 var tabletter []string
 var list_letter string
+var data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
 
 func Website() {
-
 	tmpl, err := template.ParseFiles("./templates/index.gohtml")
 	if err != nil {
 		Error404()
 	} else {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
+			data := Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
 			if r.Method == "POST" {
 				if r.FormValue("restart") == "Restart" {
 					Restart()
-					data = Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
+					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
 				} else {
 					game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
 					same := false
@@ -58,9 +60,6 @@ func Website() {
 						if game.Lettre == tabletter[i] {
 							same = true
 						}
-					}
-					if game.Lettre == "" {
-						fmt.Println(err)
 					}
 					if string(game.ArrayAnswer) == string(game.ArrayInit) {
 						WordFind = true
@@ -72,14 +71,14 @@ func Website() {
 						game.Game()
 					}
 					if game.NumberOfAttemps == 0 {
-						data = Page{"Hangman-Web ", list_letter, "https://th.bing.com/th/id/OIP.kq55Q_4YugKpMd67w_YD3wHaFO?pid=ImgDet&rs=1", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
+						data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
 					} else {
-						data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
+						data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
 					}
 				}
 				tmpl.ExecuteTemplate(w, "index", data)
 			} else if r.Method == "GET" {
-				data = Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
+				data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter, game.LetterGoodFormat}
 				fmt.Println("GET")
 				tmpl.ExecuteTemplate(w, "index", data)
 			} else {
@@ -90,6 +89,8 @@ func Website() {
 	}
 }
 
+//Fonction qui sert au restart
+//Reinstaure des nouvelles valeurs et réinitialise le nombres de vies
 func Restart() {
 	tabletter = nil
 	WordFind = false
@@ -100,6 +101,7 @@ func Restart() {
 	game.NumberOfAttemps = 10
 }
 
+//Fonction erreur 501
 func Error501() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		tmpl, _ := template.ParseFiles("./tempaltes/error501.gohtml")
@@ -108,6 +110,8 @@ func Error501() {
 	})
 	http.ListenAndServe("localhost:3000", nil)
 }
+
+//Fonction erreur 404
 func Error404() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		tmpl, _ := template.ParseFiles("./templates/error404.gohtml")
@@ -116,3 +120,5 @@ func Error404() {
 	})
 	http.ListenAndServe("localhost:3000", nil)
 }
+
+//TODO mettre des images en dossiers serveurs pour les lires (ca sera meilleurs pour la notation)
