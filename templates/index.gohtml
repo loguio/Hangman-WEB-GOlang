@@ -17,10 +17,12 @@
                <br>
               <div style="margin-top:100px; margin-right:200px" >
                 {{ if (eq .WordFind true)}}
-                <img src = "./picture/You_win.png" alt="Victoire" width="38%" align="right" margin-right="10px">
+                <img src = "./picture/you_win.png" alt="Victoire" width="38%" align="right" margin-right="10px">
+                {{  else if (eq .NumberOfAttemps 0)}}
+                <img src ="./picture/you_lose.png" alt="Défaite" width = "38%" align="right" margin-right="10">
                 {{ else }}
                    <img src={{ .URLpendu }} alt="PENDU" width="38%" align="right" margin-right="10px">
-                   {{ end }}
+                {{ end }}
               </div>
 
           </p> 
