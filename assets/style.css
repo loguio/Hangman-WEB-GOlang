@@ -27,3 +27,11 @@ body{
     font-weight: normal;
     font-style: normal;
 }
+
+img{
+    margin-top: 200;
+    margin-right: 100;
+    width:38%;
+    margin-right:10;
+    border-radius: 20px;
+}

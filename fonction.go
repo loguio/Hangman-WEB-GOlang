@@ -34,17 +34,16 @@ var tabURL = []string{
 	"./picture/pendu_3.png",
 	"./picture/pendu_2.png",
 	"./picture/pendu_1.png",
-	"./picture/you_lose.png",
 }
 
 var WordFind bool
 var tabletter []string
 var list_letter string
-var data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
 
 func Website() {
 	tmpl, err := template.ParseFiles("./templates/index.gohtml")
 	if err != nil {
+		fmt.Println("beug")
 		Error404()
 	} else {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
@@ -68,19 +67,16 @@ func Website() {
 						tabletter = append(tabletter, game.Lettre)
 						list_letter += game.Lettre
 						list_letter += ", "
-						game.Game()
+						if game.Game() == false { //si probleme lors de l'execution du programme du hangman
+							Error500()
+							return
+						}
 					}
-					if game.NumberOfAttemps == 0 {
-						data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
-					} else {
-						data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
-					}
+					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} // actualisation de Data
 				}
 				tmpl.ExecuteTemplate(w, "index", data)
 			} else if r.Method == "GET" {
-				data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter, game.LetterGoodFormat}
 				fmt.Println("GET")
-				tmpl.ExecuteTemplate(w, "index", data)
 			} else {
 				Error501()
 			}
@@ -101,12 +97,12 @@ func Restart() {
 	game.NumberOfAttemps = 10
 }
 
-//Fonction erreur 501
-func Error501() {
+//Fonction erreur 500
+func Error500() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, _ := template.ParseFiles("./tempaltes/error501.gohtml")
+		tmpl, _ := template.ParseFiles("./tempaltes/error500.gohtml")
 		fmt.Println("le serveur est en cours d'execution à l'adresse localhost:3000")
-		tmpl.ExecuteTemplate(w, "error501", nil)
+		tmpl.ExecuteTemplate(w, "error500", nil)
 	})
 	http.ListenAndServe("localhost:3000", nil)
 }
@@ -121,4 +117,12 @@ func Error404() {
 	http.ListenAndServe("localhost:3000", nil)
 }
 
-//TODO mettre des images en dossiers serveurs pour les lires (ca sera meilleurs pour la notation)
+//Fonction erreur 501
+func Error501() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, _ := template.ParseFiles("./tempaltes/error501.gohtml")
+		fmt.Println("le serveur est en cours d'execution à l'adresse localhost:3000")
+		tmpl.ExecuteTemplate(w, "error501", nil)
+	})
+	http.ListenAndServe("localhost:3000", nil)
+}

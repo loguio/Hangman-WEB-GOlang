@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"math/rand"
 
 	hangman ".."
@@ -15,10 +14,9 @@ var ArrayInit []rune = []rune(RandomWord)
 var NumberOfAttemps int = 10
 var LetterGoodFormat bool
 
-func Game() {
+func Game() bool {
 	if InitString == nil { //si le fichier n'est pas trouvé et donc il n'y a pas de mot disponible pour le jeu, arret du jeu
-		fmt.Println("erreur obtention mot aléatoire")
-		return
+		return false
 	}
 	LetterGoodFormat = hangman.UserLetter(Lettre)
 	if LetterGoodFormat == true {
@@ -41,4 +39,5 @@ func Game() {
 	} else {
 		LetterGoodFormat = false
 	}
+	return true
 }

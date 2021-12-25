@@ -17,11 +17,11 @@
                <br>
               <div style="margin-top:100px; margin-right:200px" >
                 {{ if (eq .WordFind true)}}
-                <img src = "./picture/you_win.png" alt="Victoire" width="38%" align="right" margin-right="10px">
+                <img src = "./picture/you_win.png" alt="Victoire" align="right" >
                 {{  else if (eq .NumberOfAttemps 0)}}
-                <img src ="./picture/you_lose.png" alt="Défaite" width = "38%" align="right" margin-right="10">
+                <img src ="./picture/you_lose.png" alt="Défaite" align="right" >
                 {{ else }}
-                   <img src={{ .URLpendu }} alt="PENDU" width="38%" align="right" margin-right="10px">
+                   <img src={{ .URLpendu }} alt="état du pendu"align="right" >
                 {{ end }}
               </div>
 
@@ -43,14 +43,15 @@
                  <input type="submit" name="restart" value="Restart">
              </form>
          {{if (eq .WordFind true) }}
+         <embed width="10" height="10" src="/static/You_win_sound.mp3" loop="false" autostart="true" hidden="true">
             <p>Gagné</p>
             <br>
             <p>Le mot cherché était bien: {{ .Word}}</p>
-            <br>
-            <p>Mettre une image de victoire</p>      
             {{ end }} 
             <br> 
          {{if (eq .NumberOfAttemps 0)}}
+         <embed width="10" height="10" src="/static/You_lose_sound.mp3" loop="false" autostart="true" hidden="true">
+
             <p>Le mot recherché était: {{ .Word }}</p>
             {{ end }}
             <p width="10%" align="right" style="margin-top:300px; margin-right:200px">Les lettres que vous avez déjà utilisé sont : {{ .Tabletter }}</p>
