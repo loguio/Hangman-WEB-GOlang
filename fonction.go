@@ -79,6 +79,7 @@ func Website() {
 				tmpl.ExecuteTemplate(w, "index", data)
 			} else if r.Method == "GET" {
 				fmt.Println("GET")
+
 			} else {
 				Error501()
 			}
