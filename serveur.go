@@ -7,7 +7,7 @@ import (
 
 func main() {
 
-	picturesFolder := http.FileServer(http.Dir("pictures"))
+	picturesFolder := http.FileServer(http.Dir("pictures")) //envoie des photos utilisé au serveur
 	http.Handle("/picture/", http.StripPrefix("/picture/", picturesFolder))
 
 	Website()

@@ -39,6 +39,7 @@ var tabURL = []string{
 var WordFind bool
 var tabletter []string
 var list_letter string
+var data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} // actualisation de Data
 
 func Website() {
 	tmpl, err := template.ParseFiles("./templates/index.gohtml")
@@ -49,6 +50,7 @@ func Website() {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
 			data := Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
 			if r.Method == "POST" {
+				fmt.Println("POST")
 				if r.FormValue("restart") == "Restart" {
 					Restart()
 					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
