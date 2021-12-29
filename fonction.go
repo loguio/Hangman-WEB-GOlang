@@ -10,7 +10,7 @@ import (
 	game "./hangman-classic/test"
 )
 
-type Page struct {
+type Page struct { //type Page :=> donnée envoyé a la page HTML  et utilisé lors de l'affichage grâce au package "html/template"
 	Title            string
 	Letter           string
 	URLpendu         string
@@ -22,18 +22,18 @@ type Page struct {
 	LetterGoodFormat bool
 }
 
-var tabURL = []string{
+var tabURL = []string{ // tableau avec les adresses pour les images de l'état du pendu
 	"",
-	"./picture/pendu_10.png",
-	"./picture/pendu_9.png",
-	"./picture/pendu_8.png",
-	"./picture/pendu_7.png",
-	"./picture/pendu_6.png",
-	"./picture/pendu_5.png",
-	"./picture/pendu_4.png",
-	"./picture/pendu_3.png",
-	"./picture/pendu_2.png",
-	"./picture/pendu_1.png",
+	"./static/pictures/pendu_10.png",
+	"./static/pictures/pendu_9.png",
+	"./static/pictures/pendu_8.png",
+	"./static/pictures/pendu_7.png",
+	"./static/pictures/pendu_6.png",
+	"./static/pictures/pendu_5.png",
+	"./static/pictures/pendu_4.png",
+	"./static/pictures/pendu_3.png",
+	"./static/pictures/pendu_2.png",
+	"./static/pictures/pendu_1.png",
 }
 
 var WordFind bool
@@ -48,12 +48,11 @@ func Website() {
 		Error404()
 	} else {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-			data := Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
 			if r.Method == "POST" {
 				fmt.Println("POST")
 				if r.FormValue("restart") == "Restart" {
 					Restart()
-					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
+					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} //actualisation de la variable data
 				} else {
 					game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
 					same := false
@@ -70,19 +69,19 @@ func Website() {
 						list_letter += game.Lettre
 						list_letter += ", "
 						if game.Game() == false { //si probleme lors de l'execution du programme du hangman
-							Error500()
+							Error500() // execute le code d'erreur 500
 							return
 						}
 					}
-					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} // actualisation de Data
+					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} // actualisation de data
 				}
-				tmpl.ExecuteTemplate(w, "index", data)
 			} else if r.Method == "GET" {
 				fmt.Println("GET")
-
 			} else {
-				Error501()
+				//si méthode du serveur différent de POST et GET
+				Error501() //execution du code d'erreur 501
 			}
+			tmpl.ExecuteTemplate(w, "index", data) //execution de la template "index" avec les données
 
 		})
 	}
