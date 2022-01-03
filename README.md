@@ -12,4 +12,4 @@ Pour executer notre programme(sous linux), rendez vous dans le dossier hangman-w
 ```bash
 go run .
 ```
-Ensuite aller sur votre navigateur internet et aller à l'adresse [suivante](http://localhost:3000) http://localhost:3000
+Ensuite aller sur votre navigateur internet et aller à l'adresse [suivante](http://localhost:3000/Hangman-Web) http://localhost:3000/Hangman-Web

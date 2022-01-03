@@ -39,17 +39,16 @@ var tabURL = []string{ // tableau avec les adresses pour les images de l'état d
 var WordFind bool
 var tabletter []string
 var list_letter string
-var data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} // actualisation de Data
-
+var data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} //actualisation de la variable data
 func Website() {
-	tmpl, err := template.ParseFiles("./templates/index.gohtml")
+	Error404()
+	tmpl, err := template.ParseFiles("./templates/infdex.gohtml")
 	if err != nil {
 		fmt.Println("beug")
-		Error404()
+		Error500()
 	} else {
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
+		http.HandleFunc("/Hangman-Web", func(w http.ResponseWriter, r *http.Request) { //crée une page
 			if r.Method == "POST" {
-				fmt.Println("POST")
 				if r.FormValue("restart") == "Restart" {
 					Restart()
 					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} //actualisation de la variable data
@@ -76,13 +75,13 @@ func Website() {
 					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} // actualisation de data
 				}
 			} else if r.Method == "GET" {
-				fmt.Println("GET")
+				fmt.Println(r.Method)
 			} else {
+				fmt.Println(r.Method)
 				//si méthode du serveur différent de POST et GET
 				Error501() //execution du code d'erreur 501
 			}
 			tmpl.ExecuteTemplate(w, "index", data) //execution de la template "index" avec les données
-
 		})
 	}
 }
@@ -101,30 +100,26 @@ func Restart() {
 
 //Fonction erreur 500
 func Error500() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, _ := template.ParseFiles("./tempaltes/error500.gohtml")
+	http.HandleFunc("/Hangman-Web", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, _ := template.ParseFiles("./templates/error500.gohtml")
 		fmt.Println("le serveur est en cours d'execution à l'adresse localhost:3000")
 		tmpl.ExecuteTemplate(w, "error500", nil)
 	})
-	http.ListenAndServe("localhost:3000", nil)
 }
 
 //Fonction erreur 404
 func Error404() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		tmpl, _ := template.ParseFiles("./templates/error404.gohtml")
-		fmt.Println("le serveur est en cours d'éxécution à l'adresse localhost:3000")
 		tmpl.ExecuteTemplate(w, "error404", nil)
 	})
-	http.ListenAndServe("localhost:3000", nil)
 }
 
 //Fonction erreur 501
 func Error501() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, _ := template.ParseFiles("./tempaltes/error501.gohtml")
+	http.HandleFunc("/Hangman-Web", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, _ := template.ParseFiles("./templates/error501.gohtml")
 		fmt.Println("le serveur est en cours d'execution à l'adresse localhost:3000")
 		tmpl.ExecuteTemplate(w, "error501", nil)
 	})
-	http.ListenAndServe("localhost:3000", nil)
 }
