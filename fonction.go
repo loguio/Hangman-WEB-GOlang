@@ -42,7 +42,7 @@ var list_letter string
 var data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} //actualisation de la variable data
 func Website() {
 	Error404()
-	tmpl, err := template.ParseFiles("./templates/infdex.gohtml")
+	tmpl, err := template.ParseFiles("./templates/index.gohtml")
 	if err != nil {
 		fmt.Println("beug")
 		Error500()
