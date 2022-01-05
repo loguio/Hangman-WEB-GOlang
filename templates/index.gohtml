@@ -6,6 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="static/style.css">
+        <link rel="shortcut icon"  href="static/pictures/favicon_hangman.png">
         <title>Hangman Web</title>
     </head>
      <body>
@@ -30,7 +31,7 @@
              <form action="/Hangman-Web" method="post"><!--Mettre la zone pour rentrer la lettre-->
                    <label for="fer">Insert a letter</label>
                     <br>
-                    <input type="text" name="letter" placeholder="Insère ta lettre ici " maxlength="1" autofocus>
+                    <input type="text" name="letter" placeholder="Insère ta lettre ici " maxlength="1" autofocus >
                     <input type="submit" value="valider">
                 </form>
                 <p>Mot à recherché : {{ .SearchWord}}</p>
