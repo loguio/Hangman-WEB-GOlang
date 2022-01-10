@@ -39,7 +39,8 @@ var tabURL = []string{ // tableau avec les adresses pour les images de l'état d
 var WordFind bool
 var tabletter []string
 var list_letter string
-var data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} //actualisation de la variable data
+var data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat}
+
 func Website() {
 	Error404()
 	tmpl, err := template.ParseFiles("./templates/index.gohtml")
@@ -55,15 +56,15 @@ func Website() {
 				} else {
 					game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
 					same := false
-					for i := 0; i < len(tabletter); i++ {
+					for i := 0; i < len(tabletter); i++ { //regarde si la lettre a déjà été utlisé
 						if game.Lettre == tabletter[i] {
 							same = true
 						}
 					}
-					if string(game.ArrayAnswer) == string(game.ArrayInit) {
+					if string(game.ArrayAnswer) == string(game.ArrayInit) { //tets si le mot est trouvé
 						WordFind = true
 					}
-					if game.Lettre != "" && game.Lettre != " " && !same {
+					if game.Lettre != "" && game.Lettre != " " && !same { //si les lettres sont identiques
 						tabletter = append(tabletter, game.Lettre)
 						list_letter += game.Lettre
 						list_letter += ", "
@@ -108,6 +109,7 @@ func Error500() {
 }
 
 //Fonction erreur 404
+//erreur d'URL
 func Error404() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		tmpl, _ := template.ParseFiles("./templates/error404.gohtml")

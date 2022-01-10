@@ -14,7 +14,6 @@
               <br>
              <h1>Hangman-Web</h1>
          </div>
-            <p>
                <br>
               <div style="margin-top:100px; margin-right:200px" >
                 {{ if (eq .WordFind true)}}<!-- si le mot est trouvé-->
@@ -30,9 +29,7 @@
                 {{ else }}
                    <img src={{ .URLpendu }} alt="état du pendu"align="right" ><!--état du pendu-->
                 {{ end }}
-              </div>
-
-          </p> 
+              </div>     
          {{if and (eq .WordFind false ) (gt .NumberOfAttemps 0) }}<!-- Si le mot n'est pas trouvé et que le nombre de vie est supérieur a 0-->
              <form action="/Hangman-Web" method="post"><!--Mettre la zone pour rentrer la lettre-->
                    <label for="fer">Insert a letter</label>
