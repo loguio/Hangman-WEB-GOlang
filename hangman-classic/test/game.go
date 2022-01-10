@@ -13,6 +13,7 @@ var ArrayAnswer []rune = hangman.InitArray(RandomWord)
 var ArrayInit []rune = []rune(RandomWord)
 var NumberOfAttemps int = 10
 var LetterGoodFormat bool
+var WordFind = false
 
 func Game() bool {
 	if InitString == nil { //si le fichier n'est pas trouvé et donc il n'y a pas de mot disponible pour le jeu, arret du jeu
