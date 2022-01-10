@@ -10,47 +10,48 @@ import (
 	game "./hangman-classic/test"
 )
 
-type Page struct {
-	Title           string
-	Letter          string
-	URLpendu        string
-	NumberOfAttemps int
-	SearchWord      string
-	Word            string
-	WordFind        bool
-	Tabletter       []string
+type Page struct { //type Page :=> donnée envoyé a la page HTML  et utilisé lors de l'affichage grâce au package "html/template"
+	Title            string
+	Letter           string
+	URLpendu         string
+	NumberOfAttemps  int
+	SearchWord       string
+	Word             string
+	WordFind         bool
+	Tabletter        []string
+	LetterGoodFormat bool
 }
 
-var tabURL = []string{
+var tabURL = []string{ // tableau avec les adresses pour les images de l'état du pendu
 	"",
-	"https://i.goopics.net/bqidl2.png",
-	"https://i.goopics.net/rojgcs.png",
-	"https://i.goopics.net/igktwf.png",
-	"https://i.goopics.net/a8sgek.png",
-	"https://i.goopics.net/a9mnww.png",
-	"https://i.goopics.net/lif1mq.png",
-	"https://i.goopics.net/hy8no6.png",
-	"https://i.goopics.net/h377xl.png",
-	"https://i.goopics.net/rswcvd.png",
-	"https://i.goopics.net/uiwsjx.png",
+	"./static/pictures/pendu_10.png",
+	"./static/pictures/pendu_9.png",
+	"./static/pictures/pendu_8.png",
+	"./static/pictures/pendu_7.png",
+	"./static/pictures/pendu_6.png",
+	"./static/pictures/pendu_5.png",
+	"./static/pictures/pendu_4.png",
+	"./static/pictures/pendu_3.png",
+	"./static/pictures/pendu_2.png",
+	"./static/pictures/pendu_1.png",
 }
 
 var WordFind bool
 var tabletter []string
 var list_letter string
-
+var data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} //actualisation de la variable data
 func Website() {
-
+	Error404()
 	tmpl, err := template.ParseFiles("./templates/index.gohtml")
 	if err != nil {
-		Error404()
+		fmt.Println("beug")
+		Error500()
 	} else {
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { //crée une page
-			data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
+		http.HandleFunc("/Hangman-Web", func(w http.ResponseWriter, r *http.Request) { //crée une page
 			if r.Method == "POST" {
 				if r.FormValue("restart") == "Restart" {
 					Restart()
-					data = Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
+					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} //actualisation de la variable data
 				} else {
 					game.Lettre = r.FormValue("letter") //recupere la valeur letter du formulaire (html)
 					same := false
@@ -59,9 +60,6 @@ func Website() {
 							same = true
 						}
 					}
-					if game.Lettre == "" {
-						fmt.Println(err)
-					}
 					if string(game.ArrayAnswer) == string(game.ArrayInit) {
 						WordFind = true
 					}
@@ -69,27 +67,27 @@ func Website() {
 						tabletter = append(tabletter, game.Lettre)
 						list_letter += game.Lettre
 						list_letter += ", "
-						game.Game()
+						if game.Game() == false { //si probleme lors de l'execution du programme du hangman
+							Error500() // execute le code d'erreur 500
+							return
+						}
 					}
-					if game.NumberOfAttemps == 0 {
-						data = Page{"Hangman-Web ", list_letter, "https://th.bing.com/th/id/OIP.kq55Q_4YugKpMd67w_YD3wHaFO?pid=ImgDet&rs=1", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
-					} else {
-						data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter}
-					}
+					data = Page{"Hangman-Web ", list_letter, tabURL[game.NumberOfAttemps], game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayInit), WordFind, tabletter, game.LetterGoodFormat} // actualisation de data
 				}
-				tmpl.ExecuteTemplate(w, "index", data)
 			} else if r.Method == "GET" {
-				data := Page{"Hangman-Web ", list_letter, "", game.NumberOfAttemps, string(game.ArrayAnswer), string(game.ArrayAnswer), WordFind, tabletter}
-				fmt.Println("GET")
-				tmpl.ExecuteTemplate(w, "index", data)
+				fmt.Println(r.Method)
 			} else {
-				Error501()
+				fmt.Println(r.Method)
+				//si méthode du serveur différent de POST et GET
+				Error501() //execution du code d'erreur 501
 			}
-
+			tmpl.ExecuteTemplate(w, "index", data) //execution de la template "index" avec les données
 		})
 	}
 }
 
+//Fonction qui sert au restart
+//Reinstaure des nouvelles valeurs et réinitialise le nombres de vies
 func Restart() {
 	tabletter = nil
 	WordFind = false
@@ -100,19 +98,28 @@ func Restart() {
 	game.NumberOfAttemps = 10
 }
 
-func Error501() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, _ := template.ParseFiles("./tempaltes/error501.gohtml")
+//Fonction erreur 500
+func Error500() {
+	http.HandleFunc("/Hangman-Web", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, _ := template.ParseFiles("./templates/error500.gohtml")
 		fmt.Println("le serveur est en cours d'execution à l'adresse localhost:3000")
-		tmpl.ExecuteTemplate(w, "error501", nil)
+		tmpl.ExecuteTemplate(w, "error500", nil)
 	})
-	http.ListenAndServe("localhost:3000", nil)
 }
+
+//Fonction erreur 404
 func Error404() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		tmpl, _ := template.ParseFiles("./templates/error404.gohtml")
-		fmt.Println("le serveur est en cours d'éxécution à l'adresse localhost:3000")
 		tmpl.ExecuteTemplate(w, "error404", nil)
 	})
-	http.ListenAndServe("localhost:3000", nil)
+}
+
+//Fonction erreur 501
+func Error501() {
+	http.HandleFunc("/Hangman-Web", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, _ := template.ParseFiles("./templates/error501.gohtml")
+		fmt.Println("le serveur est en cours d'execution à l'adresse localhost:3000")
+		tmpl.ExecuteTemplate(w, "error501", nil)
+	})
 }

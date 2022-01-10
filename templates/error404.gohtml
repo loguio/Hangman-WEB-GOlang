@@ -1,14 +1,19 @@
-{{ define "error404"}}
+{{ define "error404" }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="static/style.css">
+    <title>Error 404</title>
 </head>
 <body>
-    <img src="https://www.cdgi.com/wp-content/uploads/2019/05/404-Pages.jpg" alt="ERROR 404" width="100%">
+    <img src="./static/pictures/erreur404.png" alt="ERROR 404" width="100%" text-align="center" margin="auto">
+    <br>
+    <form action ="/Hangman-Web" method="post">
+        <input type="submit" value="Retour à la page de jeu">
+    </form>
 </body>
 </html>
 {{ end }}

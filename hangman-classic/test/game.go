@@ -2,22 +2,23 @@ package game
 
 import (
 	"fmt"
+	"math/rand"
 
 	hangman ".."
 )
 
+var InitString []string = hangman.GetRandomWord()
+var RandomWord string = string(InitString[rand.Intn(len(InitString))])
 var Lettre string
-var ArrayAnswer []rune
-var ArrayInit []rune
-var RandomWord string
-var NumberOfAttemps int
+var ArrayAnswer []rune = hangman.InitArray(RandomWord)
+var ArrayInit []rune = []rune(RandomWord)
+var NumberOfAttemps int = 10
 
-func Game(Lettre string) {
-	InitString := hangman.GetRandomWord() //met chaque mot de la liste de mot dans un tableau de string
-	if InitString == nil {                //si le fichier n'est pas trouvé et donc il n'y a pas de mot disponible pour le jeu, arret du jeu
+func Game() {
+	if InitString == nil { //si le fichier n'est pas trouvé et donc il n'y a pas de mot disponible pour le jeu, arret du jeu
+		fmt.Println("erreur obtention mot aléatoire")
 		return
 	}
-	fmt.Println(string(ArrayAnswer))                //affiche les lettres déjà trouver dans le tableau
 	hangman.Compare(Lettre, ArrayInit, ArrayAnswer) //regarde si la lettre est contenu dans le mot
 	compare := hangman.Compare(Lettre, ArrayInit, ArrayAnswer)
 	if compare == false { //si la lettre n'est pas contenue
@@ -34,7 +35,6 @@ func Game(Lettre string) {
 			}
 		}
 	}
-
 }
 
-//TODO revoir le programme hangman-classic avec le bon cheminement de la lettrre et tout les trucs qu'ils faut return ...
+//TODO renvoye le nb de vie actualisé
