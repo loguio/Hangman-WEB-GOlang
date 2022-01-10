@@ -19,8 +19,14 @@
               <div style="margin-top:100px; margin-right:200px" >
                 {{ if (eq .WordFind true)}}<!-- si le mot est trouvé-->
                 <img src = "./static/pictures/you_win.png" alt="Victoire" align="right" ><!--image de victoire-->
+                <embed width="10" height="10" src="/static/sound/You_win_sound.mp3" loop="false" autostart="true" hidden="true">
+                    <p>Gagné</p>
+                    <br>
+                    <p>Le mot cherché était bien: {{ .Word}}</p>
                 {{  else if (eq .NumberOfAttemps 0)}}<!--si le nombre de vie est egal a 0-->
-                <img src ="./static/pictures/you_lose.png" alt="Défaite" align="right" ><!--Image de défaite-->
+                <img src = "/static/pictures/you_lose.png" alt="Défaite" align="right"><!--Image de défaite-->
+                <embed width="10" height="10" src="/static/sound/You_lose_sound.mp3" loop="false" autostart="true" hidden="true">
+                    <p>Le mot recherché était: {{ .Word }}</p>
                 {{ else }}
                    <img src={{ .URLpendu }} alt="état du pendu"align="right" ><!--état du pendu-->
                 {{ end }}
@@ -43,18 +49,8 @@
              <form method="post">
                  <input type="submit" name="restart" value="Restart">
              </form>
-         {{if (eq .WordFind true) }} <!-- Si le mot est trouvé, mettre l'interface de victoire-->
-         <embed width="10" height="10" src="/static/sound/You_win_sound.mp3" loop="false" autostart="true" hidden="true">
-            <p>Gagné</p>
-            <br>
-            <p>Le mot cherché était bien: {{ .Word}}</p>
-            {{ end }} 
-            <br> 
-         {{if (eq .NumberOfAttemps 0)}}<!--Si le nombre de vie atteint 0 , mettre interface de défaite-->
-         <embed width="10" height="10" src="/static/sound/You_lose_sound.mp3" loop="false" autostart="true" hidden="true">
 
-            <p>Le mot recherché était: {{ .Word }}</p>
-            {{ end }}
+            <br>
             <p width="10%" align="right" style="margin-top:300px; margin-right:200px">Les lettres que vous avez déjà utilisé sont : {{ .Tabletter }}</p>
      </body>
      </html>
