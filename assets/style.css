@@ -1,10 +1,38 @@
 h1{
     color:red;
+    font-family: 'archivo_blackregular',serif;
 }
 p{
-    color:purple
+    color:purple;
+    font-family: 'loraregular',serif ;
+    font-size: 15px;
 }
+
 body{
-    background-color: #4dc8cc;
+    background-color: #4dccb0;
     
+}
+
+@font-face {
+    font-family: 'archivo_blackregular';
+    src: url('font/Archivo_Black/archivoblack-regular-webfont.woff2') format('woff2'),
+         url('font/Archivo_Black/archivoblack-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'loraregular';
+    src: url('font/Lora/lora-variablefont_wght-webfont.woff2') format('woff2'),
+         url('font/Lora/lora-variablefont_wght-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+img{
+    margin-top: 200;
+    margin-right: 100;
+    width:38%;
+    margin-right:10;
+    border-radius: 20px;
 }
