@@ -1,0 +1,57 @@
+{{ define "index" }}
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="static/style.css">
+        <link rel="shortcut icon"  href="static/pictures/favicon_hangman.png">
+        <title>Hangman Web</title>
+    </head>
+     <body>
+         <div style="text-align:center">
+              <br>
+             <h1>Hangman-Web</h1>
+         </div>
+            <p>
+               <br>
+              <div style="margin-top:100px; margin-right:200px" >
+                {{ if (eq .WordFind true)}}<!-- si le mot est trouvé-->
+                <img src = "./static/pictures/you_win.png" alt="Victoire" align="right" ><!--image de victoire-->
+                <embed width="10" height="10" src="/static/sound/You_win_sound.mp3" loop="false" autostart="true" hidden="true">
+                    <p>Gagné</p>
+                    <br>
+                    <p>Le mot cherché était bien: {{ .Word}}</p>
+                {{  else if (eq .NumberOfAttemps 0)}}<!--si le nombre de vie est egal a 0-->
+                <img src = "/static/pictures/you_lose.png" alt="Défaite" align="right"><!--Image de défaite-->
+                <embed width="10" height="10" src="/static/sound/You_lose_sound.mp3" loop="false" autostart="true" hidden="true">
+                    <p>Le mot recherché était: {{ .Word }}</p>
+                {{ else }}
+                   <img src={{ .URLpendu }} alt="état du pendu"align="right" ><!--état du pendu-->
+                {{ end }}
+              </div>
+
+          </p> 
+         {{if and (eq .WordFind false ) (gt .NumberOfAttemps 0) }}<!-- Si le mot n'est pas trouvé et que le nombre de vie est supérieur a 0-->
+             <form action="/Hangman-Web" method="post"><!--Mettre la zone pour rentrer la lettre-->
+                   <label for="fer">Insert a letter</label>
+                    <br>
+                    <input type="text" name="letter" placeholder="Insère ta lettre ici " maxlength="1" autofocus >
+                    <input type="submit" value="valider">
+                </form>
+                <p>Mot à recherché : {{ .SearchWord}} </p>
+               <p>Nombre de vie :{{ .NumberOfAttemps}}</p>
+          {{ end }}
+        {{ if (eq .LetterGoodFormat false)}}<!--Si le caractère rentrer n'est pas un caractere valide-->
+          <p>Veuillez rentrer un caractère valide</p>
+        {{ end }}
+             <form method="post">
+                 <input type="submit" name="restart" value="Restart">
+             </form>
+
+            <br>
+            <p width="10%" align="right" style="margin-top:300px; margin-right:200px">Les lettres que vous avez déjà utilisé sont : {{ .Tabletter }}</p>
+     </body>
+     </html>
+{{ end }}
