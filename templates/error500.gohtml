@@ -1,20 +1,16 @@
-{{ define "index"}}
+{{ define "error500" }}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style.css">
-    <title>Hangman Web</title>
+    <title>Error 500</title>
 </head>
 <body>
-    <h1>{{ .Title }}</h1>
-    <p>{{ .Content }}</p> <br>
-    <form action="/" method="post">
-        <input type="text" name="letter" maxlength="1">
-        <input type="submit" value="valider">
-    </form>
+    <img src="./static/pictures/erreur500.png" alt="ERROR 500" width="95%">
+    <p>Contacter un administrateur réseau</p>
 </body>
 </html>
 {{ end }}
